@@ -81,10 +81,6 @@ plt.show()
 
 # Run the code again for 'beispiel.mp3'. What is different?
 
-wav, sample_rate = librosa.load('beispiel.mp3', sr=None)
-# ... TODO ...
-
-
 # You might want to change hop_length=40, n_fft=256, fmax=4000,
 # and add a keyword:  win_length=186 to your librosa.feature.melspectrogram
 # call. Why is this necessary?
