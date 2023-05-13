@@ -127,6 +127,7 @@ plt.show()
 # call. Why is this necessary?
 
 
-#f
+# Die Änderungen ändern, die Leerstellen. Allerdings ist dafür anscheinend fast nur fmax verantwortlich.
+# Dies ist notwendig, da mp3 ein komprimiertes format ist
 # TODO
 
