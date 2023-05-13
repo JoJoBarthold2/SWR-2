@@ -76,14 +76,57 @@ plt.tight_layout()
 plt.show()
 
 # What are the differences between plt.imshow() and librosa.display.specshow()?
-
+#  Log mel spectrogram zeigt ein normales Spektrogram. Warum die Achsen beim Zeigen des Arrays anders sind habe ich nicht verstanden.
+# Ich glaube die x-Achse ist die Frequenz in meltransformierten Plot. Allerdings bin ich mir nicht sicher was die x-Achse macht, evt. Zeit in 1/5s Schritten
 
 
 # Run the code again for 'beispiel.mp3'. What is different?
+
+wav, sample_rate = sf.read('beispiel.mp3')
+wav.shape
+434139 / sample_rate  # number of seconds units: 1 / (1 / s) = s
+print(sample_rate)
+plt.plot(wav)
+plt.show()
+
+# plot wave with time on x-axis
+time = np.array([step / sample_rate for step in range(len(wav))])
+plt.plot(time, wav, label='example')
+plt.xlabel('Time in [s]')
+plt.ylim(-0.5, 0.5)
+plt.legend()
+plt.tight_layout()
+plt.show()
+
+
+# let's compute a log-mel spectrogram as
+# a feature representation of the wave form
+wav_mono = stereo_to_mono(wav)
+wav_mono.shape
+
+
+melspec = librosa.feature.melspectrogram(y=wav_mono, n_fft=256, hop_length=40, n_mels=60, sr=sample_rate,  power=1.0, fmin=10, fmax=4000, win_length=186)
+melspec_db = librosa.amplitude_to_db(melspec, ref=0.15)
+
+# plot the log-mel spectrogram
+librosa.display.specshow(melspec_db, y_axis='mel',  x_axis='time', sr=44100, hop_length=40, cmap=cm.magma)
+plt.show()
+
+# you can also treat the melspec_db array as a picture:
+plt.imshow(melspec_db, cmap=cm.magma)
+plt.tight_layout()
+plt.show()
+
+
+
+#Der Unterschied ist, dass im mp3 Spektrogram bestimmte Hz Regionen nicht mehr angezeigt werden.
+#Außerdem sind die Zeiteinheiten kleiner, weil die Sampling Rate kleiner ist.
 
 # You might want to change hop_length=40, n_fft=256, fmax=4000,
 # and add a keyword:  win_length=186 to your librosa.feature.melspectrogram
 # call. Why is this necessary?
 
+
+#f
 # TODO
 
