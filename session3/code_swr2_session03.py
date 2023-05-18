@@ -25,7 +25,7 @@ freq = 5.0
 signal = amplitude * np.sin(freq * (2 * np.pi) * times + phase)
 plt.plot(times, signal, label=f"freq={freq}; phase={phase}")
 plt.legend()
-plt.show()
+#plt.show()
 
 
 amplitude = 0.8
@@ -35,7 +35,7 @@ freq = 440.0
 signal = amplitude * np.sin(freq * (2 * np.pi) * times + phase)
 plt.plot(times, signal, label=f"freq={freq}; phase={phase}")
 plt.legend()
-plt.show()
+#plt.show()
 
 
 
@@ -55,7 +55,7 @@ ramp = 0.5 * (1.0 + ntsf(np.linspace(-1.0, 1.00, num=int(0.02 * sample_rate)), k
 
 plt.plot(ramp)
 plt.title("The ramp.")
-plt.show()
+#plt.show()
 
 
 signal[:len(ramp)] *= ramp
@@ -64,7 +64,7 @@ signal[-len(ramp):] *= ramp[::-1]
 plt.plot(times, signal, label=f"freq={freq}; phase={phase}")
 plt.title("Signal with 20 ms ramp in and out")
 plt.legend()
-plt.show()
+#plt.show()
 
 
 def apply_ramp(signal, *, ramp):
@@ -76,7 +76,7 @@ def apply_ramp(signal, *, ramp):
     return signal
 
 
-sd.play(signal, samplerate=sample_rate)
+#sd.play(signal, samplerate=sample_rate)
 
 
 # 02. Tones (mixing sine waves)
@@ -99,7 +99,7 @@ c523 = amplitude * np.sin(freq * (2 * np.pi) * times + phase)
 
 
 signal = apply_ramp(f349, ramp=ramp)
-sd.play(signal, samplerate=sample_rate)
+#sd.play(signal, samplerate=sample_rate)
 
 
 # now start mixing, but we want to keep the maximal amplitude in check.
@@ -107,39 +107,39 @@ sd.play(signal, samplerate=sample_rate)
 tone1 = (d294 + a440) / 2
 
 signal = apply_ramp(tone1, ramp=ramp)
-sd.play(signal, samplerate=sample_rate)
+#sd.play(signal, samplerate=sample_rate)
 
 
 tone2 = (d294 + a440 + f349) / 3
 
 signal = apply_ramp(tone2, ramp=ramp)
-sd.play(signal, samplerate=sample_rate)
+#sd.play(signal, samplerate=sample_rate)
 
 
 tone3 = (d294 + a440 + f349 + c523) / 4
 
 signal = apply_ramp(tone3, ramp=ramp)
-sd.play(signal, samplerate=sample_rate)
+#sd.play(signal, samplerate=sample_rate)
 
 plt.plot(times, signal, label=f"tone3")
 plt.title("full signal")
 plt.legend()
-plt.show()
+#plt.show()
 
 # one last tone with different amplitudes in the source sinus waves
 tone4 = 0.5 * d294 + 0.3 * a440 + 0.15 * f349 + 0.05 * c523
 signal = apply_ramp(tone3, ramp=ramp)
-sd.play(signal, samplerate=sample_rate)
+#sd.play(signal, samplerate=sample_rate)
 
-plt.plot(times, tone4, label=f"tone4")
+#plt.plot(times, tone4, label=f"tone4")
 #plt.plot(times, tone3, label=f"tone3")
 #plt.plot(times, tone2, label=f"tone2")
-plt.plot(times, tone1, label=f"tone1")
-plt.plot(times, d294, label=f"d294")
+#plt.plot(times, tone1, label=f"tone1")
+#plt.plot(times, d294, label=f"d294")
 plt.title("zoomed in")
 plt.xlim(0.10, 0.12)
 plt.legend()
-plt.show()
+#plt.show()
 
 
 # 03. Decomposing the tone
@@ -223,7 +223,10 @@ freqs[np.where(tone3_magnitude > 1.80e7)]
 
 # 1. Decompose tone2, what are the frequencies you find?
 
-# TODO
+tone4_fft = fft.fft(tone2)
+tone4_recov = fft.ifft(tone2)
+
+tone4_fft_truncated = tone4_fft[:len(tone4_fft)//2]
 
 # 2. Read in balmer8.flac and decompose the signal. Which are the frequencies used?
 
