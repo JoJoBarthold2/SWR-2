@@ -153,14 +153,14 @@ tone3_recov = fft.ifft(tone3_fft)
 plt.plot(times, tone3, label="tone3")
 plt.plot(times, tone3_recov.real, label="tone3 recovered")
 plt.legend()
-plt.show()
+#plt.show()
 
 # the orange line is ontop of the blue line
 
 plt.plot(tone3_fft.real, label='tone3 freq real')
 plt.plot(tone3_fft.imag, label='tone3 freq imag')
 plt.legend()
-plt.show()
+#plt.show()
 
 
 plt.plot(tone3_fft.real, label='tone3 freq real')
@@ -169,7 +169,7 @@ plt.xlim(0, 600)
 plt.ylim(-200, 200)
 plt.title('Zoomed in')
 plt.legend()
-plt.show()
+#plt.show()
 
 # reduce fft values to relevant part
 # half of the values are hermitian symmetric / the complex conjugate of the
@@ -185,7 +185,7 @@ plt.plot(freqs, tone3_fft_truncated.real, label='real')
 plt.plot(freqs, tone3_fft_truncated.imag, label='imag')
 plt.xlabel("Frequency in [Hz]")
 plt.legend()
-plt.show()
+#plt.show()
 
 tone3_magnitude = (tone3_fft_truncated * tone3_fft_truncated.conj()).real
 plt.plot(tone3_fft.real, label='real')
@@ -195,7 +195,7 @@ plt.xlim(0, 600)
 plt.ylim(-200, 200)
 plt.title('Zoomed in')
 plt.legend()
-plt.show()
+#plt.show()
 
 
 # find the peaks in the magnitude
@@ -222,15 +222,29 @@ freqs[np.where(tone3_magnitude > 1.80e7)]
 # Assignment:
 
 # 1. Decompose tone2, what are the frequencies you find?
+def decompose(tone, string):
+    tone2_fft = fft.fft(tone)
+    tone2_recov = fft.ifft(tone)
 
-tone4_fft = fft.fft(tone2)
-tone4_recov = fft.ifft(tone2)
+    tone2_fft_truncated = tone2_fft[:len(tone2_fft)//2]
+    window_length = len(tone2)
+    freqs = np.arange(len(tone2)//2) * sample_rate / window_length
 
-tone4_fft_truncated = tone4_fft[:len(tone4_fft)//2]
+    tone2_magnitude = (tone2_fft_truncated * tone2_fft_truncated.conj()).real
+    plt.plot(tone2_magnitude, label='magnitude')
+    plt.xlim(0, 600)
+    plt.ylim(-200, 200)
+    plt.title(string)
+    plt.legend()
+    plt.show()
+    print(freqs[np.where(tone2_magnitude > 1.80e7)])
+
+
+#So the frequencys are [294. 349. 440.]
 
 # 2. Read in balmer8.flac and decompose the signal. Which are the frequencies used?
 
-# TODO
+
 
 # 3. Read in lyman6.flac and decompose the signal. Which are the frequencies
 # used? Bonus: With which amplitude are they mixed together?
