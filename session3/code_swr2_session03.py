@@ -232,7 +232,8 @@ def decompose(tone, string,rate,limit):
 
     tone2_magnitude = (tone2_fft_truncated * tone2_fft_truncated.conj()).real
     plt.plot(tone2_magnitude, label='magnitude')
-    plt.xlim(0, 800)
+    plt.xlim(0, 300)
+    plt.ylim(0,5e7)
    
     plt.title(string)
     plt.legend()
@@ -245,12 +246,14 @@ def decompose(tone, string,rate,limit):
 # 2. Read in balmer8.flac and decompose the signal. Which are the frequencies used?
 balmer8 ,sample_balmer = sf.read("session3/balmer8.flac")
 
-decompose(balmer8,"balmer8", sample_balmer, 6.5e6)
+#decompose(balmer8,"balmer8", sample_balmer, 6.5e6)
 #the frequencys used are [388. 397. 410. 434. 486. 656.]
 
 # 3. Read in lyman6.flac and decompose the signal. Which are the frequencies
 # used? Bonus: With which amplitude are they mixed together?
 
 lyman6, sample_lyman = sf.read("session3/lyman6.flac")
+
+decompose(lyman6,"lyman6",sample_lyman, 6.5e6)
 
 
