@@ -222,32 +222,35 @@ freqs[np.where(tone3_magnitude > 1.80e7)]
 # Assignment:
 
 # 1. Decompose tone2, what are the frequencies you find?
-def decompose(tone, string):
+def decompose(tone, string,rate,limit):
     tone2_fft = fft.fft(tone)
     tone2_recov = fft.ifft(tone)
 
     tone2_fft_truncated = tone2_fft[:len(tone2_fft)//2]
-    window_length = len(tone2)
-    freqs = np.arange(len(tone2)//2) * sample_rate / window_length
+    window_length = len(tone)
+    freqs = np.arange(len(tone)//2) * rate / window_length
 
     tone2_magnitude = (tone2_fft_truncated * tone2_fft_truncated.conj()).real
     plt.plot(tone2_magnitude, label='magnitude')
-    plt.xlim(0, 600)
-    plt.ylim(-200, 200)
+    plt.xlim(0, 800)
+   
     plt.title(string)
     plt.legend()
     plt.show()
-    print(freqs[np.where(tone2_magnitude > 1.80e7)])
+    print(freqs[np.where(tone2_magnitude > limit)])
 
 
 #So the frequencys are [294. 349. 440.]
 
 # 2. Read in balmer8.flac and decompose the signal. Which are the frequencies used?
+balmer8 ,sample_balmer = sf.read("session3/balmer8.flac")
 
-
+decompose(balmer8,"balmer8", sample_balmer, 6.5e6)
+#the frequencys used are [388. 397. 410. 434. 486. 656.]
 
 # 3. Read in lyman6.flac and decompose the signal. Which are the frequencies
 # used? Bonus: With which amplitude are they mixed together?
 
-# TODO
+lyman6, sample_lyman = sf.read("session3/lyman6.flac")
+
 
