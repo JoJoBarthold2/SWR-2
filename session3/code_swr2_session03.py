@@ -233,11 +233,12 @@ def decompose(tone, string,rate,limit):
     tone2_magnitude = (tone2_fft_truncated * tone2_fft_truncated.conj()).real
     plt.plot(tone2_magnitude, label='magnitude')
     plt.xlim(0, 300)
-    plt.ylim(0,5e7)
+    #plt.ylim(0,5e7)
    
     plt.title(string)
     plt.legend()
     plt.show()
+    
     print(freqs[np.where(tone2_magnitude > limit)])
 
 
@@ -254,6 +255,6 @@ balmer8 ,sample_balmer = sf.read("session3/balmer8.flac")
 
 lyman6, sample_lyman = sf.read("session3/lyman6.flac")
 
-decompose(lyman6,"lyman6",sample_lyman, 6.5e6)
+decompose(lyman6,"lyman6",sample_lyman, 9e6)
 
-
+# [102.66666667 103.33333333 122.        ]frequencies used
