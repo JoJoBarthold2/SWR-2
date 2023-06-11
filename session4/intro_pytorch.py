@@ -168,14 +168,16 @@ for epoch in range(30):
     print(f"Average Error in epoch {epoch} is: {np.mean(errors)}")
 
 
-
+print("weights:")
 print(intro_model.linear_mapping.weight)
+print("bias:")
 print(intro_model.linear_mapping.bias)
 
 
 # Can you find a -1, 0, 2, and 3 in the weights and biases? Where are these four numbers present as well?
 
-# TODO
+#In the weight you can find  2 and -1 while in the bias you can find (approximately) 0 and 3. 2 und -1 findet man als Faktoren in unserer Error formel, 0 und 3 als addierte Terme
+
 
 
 # Instantiate a sencond intro_model that takes a vector with two numbers as
@@ -187,7 +189,7 @@ xx = torch.tensor([1.0, 2.0])
 yy_true = torch.tensor([3.0])
 
 # TODO
-intro_model2 = IntroModel(????)
+intro_model2 = IntroModel(2,1)
 
 yy = intro_model2(xx)
 
