@@ -202,9 +202,32 @@ xxs = np.array(np.random.normal(size=(100, 100)), dtype=np.float32)
 # TODO
 
 
+for epoch in range(30):
+    np.random.shuffle(xxs)  # we don't want to have the same order in each epoch
+    errors = list()
+    for i in range(100):
+        for j in range(100):
+            xx1 = xxs[i,j]
+            if i < 99:
+                xx0 = xxs[i+1,j]
+            else:
+                xx0 = xxs[i-1,j]
+           
+            xx = torch.tensor([xx0, xx1])
+            yy_true = torch.tensor([xx0 +xx1])
+            yy = intro_model2.forward(xx)
+            error = torch.mean((yy_true - yy) **2)
+            error.backward()
+            new_weights = intro_model2.linear_mapping.weight - learning_rate * intro_model2.linear_mapping.weight.grad
+            new_biases = intro_model2.linear_mapping.bias - learning_rate * intro_model2.linear_mapping.bias.grad
+
+            intro_model2.linear_mapping.weight = torch.nn.Parameter(new_weights)
+            intro_model2.linear_mapping.bias = torch.nn.Parameter(new_biases)
+            errors.append(float(error))
+    print(f"Average Error in epoch {epoch} is: {np.mean(errors)}")
+
 
 
 # Bonus Questions: Can we model the square of the input or the logarithm of the input with our IntroModel?
 
-# TODO
-
+# Although we might try, as a linear model we at least have to do some converting after the fact, so no , not really
