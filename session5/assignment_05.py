@@ -51,8 +51,7 @@ volume_orange(0.99 * rr, dimension=2) / volume_orange(rr, dimension=2)
 
 
 dimensions = (2, 3, 5, 10, 170)
-proportions = [ ???? # TODO
-        for dd in dimensions]
+proportions = [(volume_orange(0.99 * rr, dimension=dd) / volume_orange(rr, dimension=dd)) for dd in dimensions]
 
 from matplotlib import pyplot as plt
 
@@ -215,9 +214,9 @@ print(npz_files.files)
 xx2s = npz_files['xx2s']
 yy2s = npz_files['yy2s']
 
-linear = LinearModel(????)
-lstm = LSTMModel(????)
-transformer_enc = TransformerModel(????)
+##linear = LinearModel(????)
+##lstm = LSTMModel(????)
+##transformer_enc = TransformerModel(????)
 
 
 # TODO
