@@ -275,9 +275,9 @@ yy2s = npz_files['yy2s']
 
 
                                    
-linear = LinearModel(2, 3)
-lstm = LSTMModel(2, 3)
-transformer_enc = TransformerModel(2, 3)
+linear = LinearModel(5, 3)
+lstm = LSTMModel(5, 3)
+transformer_enc = TransformerModel(5, 3)
 
 # test a single forward pass to see if the model is specified correctly
 print(xx.shape)
@@ -289,17 +289,8 @@ yy = torch.tensor(yy2s[0])
 print(yy.shape)
 
 yy_linear = linear.forward(xx)
-yy_linear.shape  # [3]
-
-# insert the batch and sequence dimension with .view
-yy_lstm = lstm.forward(xx.view(1, 1, 2))
-yy_lstm.shape  # [1, 1, 3]
-yy_lstm = yy_lstm.view(3)  # remove the batch and sequence dimension again
 
 
-yy_transformer = transformer_enc.forward(xx.view(1, 1, 2))
-yy_transformer.shape  # [1, 1, 3]
-yy_transformer = yy_transformer.view(3) 
                                    
 
 
@@ -353,10 +344,74 @@ torch.mean((yy - yy_hat) ** 2)
 
 
 # TODO: Now do the training. Be aware that the sequence length is not always 19!
+loss_list_transform = list()
+optimizer = torch.optim.SGD(transformer_enc.parameters(), lr=learning_rate)
+for epoch in range(100):
+    losses_transform = list()
+  
+    for index in range(len(yy1s)):
+            xx, yy_true = seq_datas[index]
+            xx = torch.tensor(xx)
+            yy_true = torch.tensor(yy_true)
+            sequence_length = xx.shape[0]
+        # reset gradients
+            optimizer.zero_grad()
+
+        # forward pass)
+            yy_transformer = transformer_enc.forward(xx.view(sequence_length, 1, 3))
+            yy_transformer = yy_transformer.view(sequence_length,1,1)  
+
+        # loss computation
+            loss = torch.mean( (yy_true - yy_transformer) ** 2 )
+            losses_transform.append(float(loss.item()))
+
+        # backwards pass
+            loss.backward()
+
+        # stochastic gradient decent
+            optimizer.step()
+    print(f"Loss after epoch {epoch} is: {np.mean(losses_transform)}")
+    loss_list_transform.append(np.mean(losses_transform))
+
+
+loss_list_lstm = list()
+optimizer = torch.optim.SGD(lstm.parameters(), lr=learning_rate)
+for epoch in range(100):
+    losses_lstm = list()
+   
+    for index in range(len(yy1s)):
+            xx, yy_true = seq_datas[index]
+            xx = torch.tensor(xx)
+            yy_true = torch.tensor(yy_true)
+            sequence_length = xx.shape[0]
+        # reset gradients
+            optimizer.zero_grad()
+
+        # forward pass)
+            yy_lstm = lstm.forward(xx.view(sequence_length, 1, 3))
+            yy_lstm = yy_lstm.view(sequence_length,1,1)  
+
+        # loss computation
+            loss = torch.mean( (yy_true - yy_lstm) ** 2 )
+            losses_lstm.append(float(loss.item()))
+
+        # backwards pass
+            loss.backward()
+
+        # stochastic gradient decent
+            optimizer.step()
+    loss_list_lstm.append(np.mean(losses_lstm))
+    print(f"Loss after epoch {epoch} is: {loss_list_lstm[epoch]}")
+   
+
 
 # Which model converges fast? Create a plot where the epoch is on the x-axis
 # and the mean loss over all training samples is on the y-axis.
-
+plt.plot(list(range(100)), loss_list_lstm)
+plt.plot(list(range(100)), loss_list_transform)
+plt.title("Model Performance")
+plt.legend()
+plt.show()
 
 # NOTE: No batching is done in this example therefore no padding is required.
 
