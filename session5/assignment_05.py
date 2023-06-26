@@ -55,23 +55,23 @@ proportions = [(volume_orange(0.99 * rr, dimension=dd) / volume_orange(rr, dimen
 
 from matplotlib import pyplot as plt
 
-plt.plot(dimensions, proportions, label="proportion selected")
-plt.plot((2, 170), (0.1, 0.1), "k:", label="10% line")
-plt.plot((2, 170), (0.01, 0.01), "r--", label="1% line")
-plt.legend()
-plt.xlabel('number of dimensions')
-plt.ylabel('proportion orange fruit')
-plt.tight_layout()
-plt.show()
+#plt.plot(dimensions, proportions, label="proportion selected")
+#plt.plot((2, 170), (0.1, 0.1), "k:", label="10% line")
+#plt.plot((2, 170), (0.01, 0.01), "r--", label="1% line")
+#plt.legend()
+#plt.xlabel('number of dimensions')
+#plt.ylabel('proportion orange fruit')
+#plt.tight_layout()
+#plt.show()
 
 
 # BONUS
-dimensions = (2, 3, 5, 10, 170, 300, 4096)
-proportions = [volume_orange(0.99 * rr, dimension=dd) / volume_orange(rr, dimension=dd)
-        for dd in dimensions]
+#dimensions = (2, 3, 5, 10, 170, 300, 4096)
+#proportions = [volume_orange(0.99 * rr, dimension=dd) / volume_orange(rr, dimension=dd)
+        #for dd in dimensions]
 # Overflow error for 300
 
-from math import log, lgamma, exp
+#from math import log, lgamma, exp
 
 # TODO
 
@@ -96,7 +96,7 @@ from math import log, lgamma, exp
 import numpy as np
 import torch
 
-npz_files = np.load('data0.npz')
+npz_files = np.load("session5\data0.npz")
 print(npz_files.files)
 xx0s = npz_files['xx0s']
 yy0s = npz_files['yy0s']
@@ -148,7 +148,7 @@ class TransformerModel(torch.nn.Module):
         return output
 
 
-npz_files = np.load('data1.npz')
+npz_files = np.load("session5\data1.npz")
 print(npz_files.files)
 xx1s = npz_files['xx1s']
 yy1s = npz_files['yy1s']
@@ -174,26 +174,57 @@ yy_transformer = transformer_enc.forward(xx.view(1, 1, 2))
 yy_transformer.shape  # [1, 1, 3]
 yy_transformer = yy_transformer.view(3)  # remove the batch and sequence dimension again
 
-
-# do the learning
 learning_rate = 0.001
-optimizer = torch.optim.SGD(transformer_enc.parameters(), lr=learning_rate)
+# do the learning
+def transformer_learning(transformer_enc):
+    
+    optimizer = torch.optim.SGD(transformer_enc.parameters(), lr=learning_rate)
 
-for epoch in range(100):
-    losses = list()
+    for epoch in range(100):
+        losses = list()
+        for index in range(len(yy1s)):
+            xx = torch.tensor(xx1s[index])
+            yy_true = torch.tensor(yy1s[index])
+
+        # reset gradients
+            optimizer.zero_grad()
+
+        # forward pass
+            yy_transformer = transformer_enc.forward(xx.view(1, 1, 2))
+            yy_transformer = yy_transformer.view(3)  # remove the batch and sequence dimension again
+
+        # loss computation
+            loss = torch.mean( (yy_true - yy_transformer) ** 2 )
+            losses.append(float(loss.item()))
+
+        # backwards pass
+            loss.backward()
+
+        # stochastic gradient decent
+            optimizer.step()
+        print(f"Loss after epoch {epoch} is: {np.mean(losses)}")
+
+#transformer_learning(transformer_enc)
+#training for LSTM
+
+def lstm_learning(lstm):
+    optimizer = torch.optim.SGD(lstm.parameters(), lr=learning_rate)
+    for epoch in range(100):
+        losses = list()
     for index in range(len(yy1s)):
         xx = torch.tensor(xx1s[index])
         yy_true = torch.tensor(yy1s[index])
+        
 
-        # reset gradients
+        #resetting gradients
         optimizer.zero_grad()
 
-        # forward pass
-        yy_transformer = transformer_enc.forward(xx.view(1, 1, 2))
-        yy_transformer = yy_transformer.view(3)  # remove the batch and sequence dimension again
+        #forward pass
+        yy_lstm = lstm.forward(xx.view(1, 1, 2))
+        yy_lstm = yy_lstm.view(3)
 
         # loss computation
-        loss = torch.mean( (yy_true - yy_transformer) ** 2 )
+        loss = torch.mean( (yy_true - yy_lstm) ** 2 )
         losses.append(float(loss.item()))
 
         # backwards pass
@@ -201,22 +232,75 @@ for epoch in range(100):
 
         # stochastic gradient decent
         optimizer.step()
-    print(f"Loss after epoch {epoch} is: {np.mean(losses)}")
+    print(f"Loss after  lstm epoch {epoch} is: {np.mean(losses)}")
 
-# TODO do it for the other two models as well
 
+
+#training for linear model
+def linear_learning(linear):
+    optimizer = torch.optim.SGD(linear.parameters(), lr = learning_rate)
+    for epoch in range(100):
+        losses = list()
+    for index in range(len(yy1s)):
+        xx = torch.tensor(xx1s[index])
+        yy_true = torch.tensor(yy1s[index])
+        
+
+        #resetting gradients
+        optimizer.zero_grad()
+
+        #forward pass
+        yy_linear = linear.forward(xx)
+
+        # loss computation
+        loss = torch.mean( (yy_true - yy_linear) ** 2 )
+        losses.append(float(loss.item()))
+
+        # backwards pass
+        loss.backward()
+
+        # stochastic gradient decent
+        optimizer.step()
+    print(f"Loss after  linear epoch {epoch} is: {np.mean(losses)}")
 # Which one has the lowest loss at the end?
 
-
+#Transformer loss : 22.668760289922357
+#loss after  lstm epoch 99 is: 7.4625117167970165
+#Loss after  linear epoch 99 is: 18.44732903673982 
 # Now for the next data set:
-npz_files = np.load('data2.npz')
+npz_files = np.load('session5\data2.npz')
 print(npz_files.files)
 xx2s = npz_files['xx2s']
 yy2s = npz_files['yy2s']
 
-##linear = LinearModel(????)
-##lstm = LSTMModel(????)
-##transformer_enc = TransformerModel(????)
+
+                                   
+linear = LinearModel(2, 3)
+lstm = LSTMModel(2, 3)
+transformer_enc = TransformerModel(2, 3)
+
+# test a single forward pass to see if the model is specified correctly
+print(xx.shape)
+yy1 = torch.tensor(yy1s[0])
+print(yy1.shape)
+xx = torch.tensor(xx2s[0])
+print(xx.shape)
+yy = torch.tensor(yy2s[0])
+print(yy.shape)
+
+yy_linear = linear.forward(xx)
+yy_linear.shape  # [3]
+
+# insert the batch and sequence dimension with .view
+yy_lstm = lstm.forward(xx.view(1, 1, 2))
+yy_lstm.shape  # [1, 1, 3]
+yy_lstm = yy_lstm.view(3)  # remove the batch and sequence dimension again
+
+
+yy_transformer = transformer_enc.forward(xx.view(1, 1, 2))
+yy_transformer.shape  # [1, 1, 3]
+yy_transformer = yy_transformer.view(3) 
+                                   
 
 
 # TODO
@@ -237,7 +321,7 @@ yy2s = npz_files['yy2s']
 
 import pickle
 
-with open('seq_data0.pkl', 'rb') as pfile:
+with open("session5\seq_data0.pkl", 'rb') as pfile:
     seq_datas = pickle.load(pfile)
 
 
